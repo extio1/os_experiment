@@ -88,7 +88,7 @@ main(int argc, char** argv)
 
     printf("main:  pid [%d], ppid[%d], tid [%d]\nwatch -d -n1 \"cat /proc/%d/status | grep Sig\" \n",
             getpid(), getppid(), gettid(), getpid());
-    //sleep(10);
+    sleep(10);
 
     if( sigaction(SIGNUM, &action, NULL) != 0 ){
         perror("sigaction() error");

@@ -13,7 +13,6 @@
  */
 #define SIGNUM SIGINT 
 
-
 // handler may contain non-reentrant functions
 void
 signal_handler(int signum, siginfo_t* info, void* )
@@ -40,7 +39,7 @@ void*
 thread_routine(void*)
 {
     sigset_t set;
-    sigval_t sigval = {.sival_ptr = "hello"}; // data'll be transferred to sighandler
+    sigval_t sigval = {.sival_int = 42, .sival_ptr = "hello"}; // data'll be transferred to sighandler
 
     printf("thread created: pid [%d], ppid[%d], tid [%d]\n", getpid(), getppid(), gettid());
 

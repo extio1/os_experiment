@@ -1,3 +1,11 @@
+/*
+ * Main thread register handler for SIGNUM and creates 
+ * new thread. 
+ * 
+ * The thread blocks SIGNUM and starts send (sigqueue) to main thread
+ * passing "hello" with the signal.  
+ */
+
 #define _GNU_SOURCE
 
 #include <pthread.h>
@@ -11,7 +19,7 @@
  * 
  * Examine $ watch -d -n1 "cat /proc/pid/status | grep Sig"
  */
-#define SIGNUM SIGINT 
+#define SIGNUM SIGRTMIN 
 
 // handler may contain non-reentrant functions
 void
@@ -23,7 +31,7 @@ signal_handler(int signum, siginfo_t* info, void* )
     char* time = ctime(&mytime);
     time[strlen(time)-1] = '\0';
 
-    if( info->si_code == SI_QUEUE ){
+    if( info->si_code == SI_QUEUE ){ // if signal was sigqueue'd
         write(1, "SI_QUEUE installed\n", 20);
         printf("[%s] tid :[%d], sigval.sival_int - %d; sigval.sival_ptr - %s\n",
                 time, gettid(), sigval.sival_int, (char*)sigval.sival_ptr);
@@ -62,7 +70,7 @@ thread_routine(void*)
         if( sigqueue(getpid(), SIGNUM, sigval) != 0 ){
             perror("sigqueue() error");
         }
-        //sleep(1);
+        sleep(1); // comment to get queue signal buffer overflow (with real-time signals sending only)
     }
 
     return NULL;
@@ -80,7 +88,7 @@ main(int argc, char** argv)
 
     printf("main:  pid [%d], ppid[%d], tid [%d]\nwatch -d -n1 \"cat /proc/%d/status | grep Sig\" \n",
             getpid(), getppid(), gettid(), getpid());
-    sleep(10);
+    //sleep(10);
 
     if( sigaction(SIGNUM, &action, NULL) != 0 ){
         perror("sigaction() error");
@@ -94,7 +102,6 @@ main(int argc, char** argv)
 
     // just living
     while(1){
-        printf("ALIVE\n");
         sleep(1);
     }
 

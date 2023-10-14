@@ -15,7 +15,7 @@ signal_handler(int signum, siginfo_t* info, void* )
     char* time = ctime(&mytime);
     time[strlen(time)-1] = '\0';
 
-    if( info->si_code == SI_QUEUE ){
+    if( info->si_code == SI_QUEUE ){ // if signal was sigqueue'd
         write(1, "SI_QUEUE installed\n", 20);
         printf("[%s] tid :[%d], sigval.sival_int - %d; sigval.sival_ptr - %d\n",
                 time, gettid(), sigval.sival_int, *(int*)sigval.sival_ptr);

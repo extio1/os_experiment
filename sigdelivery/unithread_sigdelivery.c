@@ -17,8 +17,8 @@ signal_handler(int signum, siginfo_t* info, void* )
 
     if( info->si_code == SI_QUEUE ){ // if signal was sigqueue'd
         write(1, "SI_QUEUE installed\n", 20);
-        printf("[%s] tid :[%d], sigval.sival_int - %d; sigval.sival_ptr - %d\n",
-                time, gettid(), sigval.sival_int, *(int*)sigval.sival_ptr);
+        printf("[%s] tid :[%d], sigval.sival_int - %d; sigval.sival_ptr - %s\n",
+                time, gettid(), sigval.sival_int, (char*)sigval.sival_ptr);
     } else {
         write(1, "SI_QUEUE NOT installed\n", 24);
     }
@@ -30,14 +30,14 @@ int
 main(int argc, char** argv)
 {
     int val = 42;
-    //char *string = "hello";
+    char *string = "hello";
     int *val_ptr = &val;
 
     struct sigaction action;
     action.sa_flags = SA_SIGINFO;
     action.sa_sigaction = signal_handler;
 
-    sigval_t sigval = {.sival_int = val, .sival_ptr = val_ptr};
+    sigval_t sigval = {.sival_int = val, .sival_ptr = string};
     if( sigaction(SIGINT, &action, NULL) != 0 ){
         perror("sigaction() error");
         return -1;

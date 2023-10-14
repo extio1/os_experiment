@@ -30,7 +30,7 @@ int
 main(int argc, char** argv)
 {
     int val = 42;
-    char *string = "hello";
+    char *string = "hello world";
     int *val_ptr = &val;
 
     struct sigaction action;
